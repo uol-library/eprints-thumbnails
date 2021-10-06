@@ -13,10 +13,10 @@ sub new
 
 	my( $self ) = $class->SUPER::new( %opts );
 
-	$self->{name} = "IIIF Manifest";
-	$self->{accept} = [ 'dataobj/*' ];
-	$self->{visible} = "all";
-	$self->{suffix} = ".json";
+	$self->{name}     = "IIIF Manifest";
+	$self->{accept}   = [ 'dataobj/*' ];
+	$self->{visible}  = "all";
+	$self->{suffix}   = ".json";
 	$self->{mimetype} = "application/json; charset=utf-8";
 
 	return $self;
@@ -30,14 +30,14 @@ sub output_dataobj
 	my $id   = $eprint->uri;
 
 	my $data = {
-		'@context' => 'http://iiif.io/api/presentation/3/context.json',
-		'id' => $id,
-		'type' => 'Manifest',
-		'label' => { 'en' => [ $eprint->value( 'title' ) ] },
-		'summary' => { 'en' => [ $eprint->value( 'abstract' ) ] },
+		'@context'  => 'http://iiif.io/api/presentation/3/context.json',
+		'id'        => $id,
+		'type'      => 'Manifest',
+		'label'     => { 'en' => [ $eprint->value( 'title' ) ] },
+		'summary'   => { 'en' => [ $eprint->value( 'abstract' ) ] },
 		'behaviour' => [ 'paged' ],
-		'items' => [],
-		'metadata' => [
+		'items'     => [],
+		'metadata'  => [
 			{
 				'label' => { 'en' => [ 'Collection' ] },
 				'value' => { 'en' => [ $eprint->value( 'collection' ) ] },
@@ -77,8 +77,8 @@ sub output_dataobj
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
 				my $thumb = {
-					'id' => $eprintdoc->get_url(),
-					'type' => 'Image',
+					'id'     => $eprintdoc->get_url(),
+					'type'   => 'Image',
 					'format' => $eprintdoc->value( 'mime_type' ),
 				};
 				push @$rels, $thumb;
@@ -86,16 +86,16 @@ sub output_dataobj
 			}, \@rels );
 		}
 		push @canvases, {
-			'id' => $doc->uri,
-			'type' => 'Canvas',
+			'id'    => $doc->uri,
+			'type'  => 'Canvas',
 			'label' => $doc->get_value( 'formatdesc' ),
 			'items' => [
 				{
-					'id' => $doc->uri,
-					'type' => 'Annotation',
-					'body' => {
-						'id' => $doc->get_url(),
-						'type' => 'Image',
+					'id'        => $doc->uri,
+					'type'      => 'Annotation',
+					'body'      => {
+						'id'     => $doc->get_url(),
+						'type'   => 'Image',
 						'format' => $doc->get_value( 'mime_type' )
 					},
 					'thumbnail' => \@rels

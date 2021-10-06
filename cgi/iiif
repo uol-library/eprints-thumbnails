@@ -10,7 +10,7 @@ my $eprint = EPrints::DataObj::EPrint->new(
 			$session, 
 			$eprintid, 
 			$session->get_repository->get_dataset( "archive" ) );
-$session->send_http_header( "content_type"=>"text/javascript" );
+$session->send_http_header( "content_type"=>"application/json" );
 print $eprint->export( "IIIFManifest" );
 $session->terminate;
 
