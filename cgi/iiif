@@ -5,12 +5,47 @@ use strict;
 my $session = new EPrints::Session;
 Apache::exit( 0 ) unless( defined $session );
 
-my $eprintid = $session->param( "eprintid" );
-my $eprint = EPrints::DataObj::EPrint->new( 
-			$session, 
-			$eprintid, 
-			$session->get_repository->get_dataset( "archive" ) );
-$session->send_http_header( "content_type"=>"application/json" );
-print $eprint->export( "IIIFManifest" );
+my $eprintid = $session->param( 'eprintid' );
+my $emuid = $session->param( 'emuid' );
+my $eprint;
+if ( $eprintid )
+{
+	$eprint = EPrints::DataObj::EPrint->new( 
+		$session, 
+		$eprintid, 
+		$session->get_repository->get_dataset( "archive" )
+	);
+}
+elsif ( $emuid )
+{
+	my $results = $session->get_repository->get_dataset( 'archive' )->search(
+		'filters' => [
+			{
+				'meta_fields' => [ 'emu_id' ],
+				'value' => $emuid,
+			}
+		]
+	);
+	if ( $results->count > 0 )
+	{
+		$eprint = $results->item( 0 );
+	}
+	else
+	{
+		Apache::exit( 0 );
+	}
+}
+else
+{
+	Apache::exit( 0 );
+}
+if ( $eprint )
+{
+	$session->send_http_header( "content_type"=>"application/json" );
+	print $eprint->export( "IIIFManifest" );
+}
+else{
+	Apache::exit( 0 );
+}
 $session->terminate;
 

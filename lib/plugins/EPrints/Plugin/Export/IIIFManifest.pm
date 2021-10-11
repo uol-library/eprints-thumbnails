@@ -1,6 +1,7 @@
 package EPrints::Plugin::Export::IIIFManifest;
 
 use EPrints::Plugin::Export::TextFile;
+use Image::Size;
 use JSON;
 
 @ISA = ( "EPrints::Plugin::Export::TextFile" );
@@ -13,11 +14,11 @@ sub new
 
 	my( $self ) = $class->SUPER::new( %opts );
 
-	$self->{name}     = "IIIF Manifest";
+	$self->{name}     = 'IIIF Manifest';
 	$self->{accept}   = [ 'dataobj/*' ];
-	$self->{visible}  = "all";
-	$self->{suffix}   = ".json";
-	$self->{mimetype} = "application/json; charset=utf-8";
+	$self->{visible}  = 'all';
+	$self->{suffix}   = '.json';
+	$self->{mimetype} = 'application/json; charset=utf-8';
 
 	return $self;
 }
@@ -43,15 +44,19 @@ sub output_dataobj
 				'value' => { 'en' => [ $eprint->value( 'collection' ) ] },
 			},
 			{
-				'label' => { 'en' => [ 'Date range' ] },
+				'label' => { 'en' => [ 'DateRange' ] },
 				'value' => { 'en' => [ $eprint->value( 'date_range' ) ] },
 			},
 			{
-				'label' => { 'en' => [ 'EMu ID' ] },
+				'label' => { 'en' => [ 'EMuID' ] },
 				'value' => { 'en' => [ $eprint->value( 'emu_id' ) ] },
 			},
 			{
-				'label' => { 'en' => [ 'Physical Identifier' ] },
+				'label' => { 'en' => [ 'EPrintID' ] },
+				'value' => { 'en' => [ $eprint->value( 'eprintid' ) ] },
+			},
+			{
+				'label' => { 'en' => [ 'PhysicalIdentifier' ] },
 				'value' => { 'en' => [ $eprint->value( 'physical_identifier' ) ] },
 			}
 		],
@@ -76,10 +81,13 @@ sub output_dataobj
 		{
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
+				my $fileobj = $eprintdoc->stored_file( $eprintdoc->get_main );
+				my $filepath = '' . $fileobj->get_local_copy;
 				my $thumb = {
 					'id'     => $eprintdoc->get_url(),
 					'type'   => 'Image',
 					'format' => $eprintdoc->value( 'mime_type' ),
+					'path'   => $filepath,
 				};
 				push @$rels, $thumb;
 
