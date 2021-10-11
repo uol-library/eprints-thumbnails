@@ -1,7 +1,7 @@
 package EPrints::Plugin::Export::IIIFManifest;
 
 use EPrints::Plugin::Export::TextFile;
-use Image::Size;
+use Image::ExifTool;
 use JSON;
 
 @ISA = ( "EPrints::Plugin::Export::TextFile" );
@@ -27,8 +27,9 @@ sub output_dataobj
 {
 	my( $plugin, $eprint ) = @_;
 
-	my $repo = $plugin->repository;
-	my $id   = $eprint->uri;
+	my $repo     = $plugin->repository;
+	my $exifTool = new Image::ExifTool;
+	my $id       = $eprint->uri;
 
 	my $data = {
 		'@context'  => 'http://iiif.io/api/presentation/3/context.json',
@@ -70,25 +71,54 @@ sub output_dataobj
 		my $doc = $docs[$i];
 		my @rels;
 		my $relation;
+		my $filetype;
+		my $fileobj  = $doc->stored_file( $doc->get_main );
+		my $filepath = '' . $fileobj->get_local_copy;
+		my $fileinfo = $exifTool->ExtractInfo( $filepath );
+		my $body = {
+			'id'     => $doc->get_url(),
+			'format' => $doc->get_value( 'mime_type' )
+		};
 		if ( $doc->get_value( 'format' ) eq 'audio' ) {
-			$relation = 'isaudio_mp3ThumbnailVersionOf';
+			$relation           = 'isaudio_mp3ThumbnailVersionOf';
+			$filetype           = 'Sound';
+			$body->{'type'}     = 'Sound';
+			my $mp3info         = $exifTool->GetInfo( 'Duration#' );
+			$body->{'duration'} = sprintf( '%d', $mp3info->{'Duration #'} );
 		} elsif ($doc->get_value( 'format' ) eq 'image' ) {
-			$relation = 'islightboxThumbnailVersionOf';
+			$relation         = 'islightboxThumbnailVersionOf';
+			$filetype         = 'Image';
+			$body->{'type'}   = 'Image';
+			my $imginfo       = $exifTool->GetInfo('ImageWidth', 'ImageHeight');
+			$body->{'width'}  = $imginfo->{'ImageWidth'};
+			$body->{'height'} = $imginfo->{'ImageHeight'};
 		}
+
 
 		my $related = $doc->search_related( $relation );
 		if ( $related->count > 0 )
 		{
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
-				my $fileobj = $eprintdoc->stored_file( $eprintdoc->get_main );
-				my $filepath = '' . $fileobj->get_local_copy;
+				my $relfileobj = $eprintdoc->stored_file( $eprintdoc->get_main );
+				my $relfilepath = '' . $relfileobj->get_local_copy;
+				my $relinfo = $exifTool->ExtractInfo( $relfilepath );
 				my $thumb = {
 					'id'     => $eprintdoc->get_url(),
-					'type'   => 'Image',
+					'type'   => $filetype,
 					'format' => $eprintdoc->value( 'mime_type' ),
-					'path'   => $filepath,
 				};
+				if ( $filetype eq 'Image' )
+				{
+					my $relimginfo = $exifTool->GetInfo('ImageWidth', 'ImageHeight');
+					$thumb->{'width'} = $relimginfo->{'ImageWidth'};
+					$thumb->{'height'} = $relimginfo->{'ImageHeight'};
+				}
+				if ( $filetype eq 'Sound' )
+				{
+					my $relmp3info = $exifTool->GetInfo( 'Duration#' );
+					$thumb->{'duration'} = sprintf( '%d', $relmp3info->{'Duration #'} );
+				}
 				push @$rels, $thumb;
 
 			}, \@rels );
@@ -101,11 +131,7 @@ sub output_dataobj
 				{
 					'id'        => $doc->uri,
 					'type'      => 'Annotation',
-					'body'      => {
-						'id'     => $doc->get_url(),
-						'type'   => 'Image',
-						'format' => $doc->get_value( 'mime_type' )
-					},
+					'body'      => $body,
 					'thumbnail' => \@rels
 				}
 			]
