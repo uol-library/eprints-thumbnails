@@ -100,9 +100,6 @@ sub output_dataobj
 		{
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
-				my $relfileobj = $eprintdoc->stored_file( $eprintdoc->get_main );
-				my $relfilepath = '' . $relfileobj->get_local_copy;
-				my $relinfo = $exifTool->ExtractInfo( $relfilepath );
 				my $thumb = {
 					'id'     => $eprintdoc->get_url(),
 					'type'   => $filetype,
@@ -110,14 +107,16 @@ sub output_dataobj
 				};
 				if ( $filetype eq 'Image' )
 				{
+					my $relfileobj = $eprintdoc->stored_file( $eprintdoc->get_main );
+					my $relfilepath = '' . $relfileobj->get_local_copy;
+					my $relinfo = $exifTool->ExtractInfo( $relfilepath );
 					my $relimginfo = $exifTool->GetInfo('ImageWidth', 'ImageHeight');
 					$thumb->{'width'} = $relimginfo->{'ImageWidth'};
 					$thumb->{'height'} = $relimginfo->{'ImageHeight'};
 				}
 				if ( $filetype eq 'Sound' )
 				{
-					my $relmp3info = $exifTool->GetInfo( 'Duration#' );
-					$thumb->{'duration'} = sprintf( '%d', $relmp3info->{'Duration #'} );
+					$thumb->{'duration'} = $body->{'duration'};
 				}
 				push @$rels, $thumb;
 
