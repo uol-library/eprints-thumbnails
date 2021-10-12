@@ -62,7 +62,6 @@ if ( $eprint )
 		if ( open(my $fhw, '>', $file) )
 		{
 			print $fhw $manifest;
-			print $fhw "\n#cached";
 			close($fhw);
 		}
 	}
