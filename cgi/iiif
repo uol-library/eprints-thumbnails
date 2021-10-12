@@ -41,11 +41,37 @@ else
 }
 if ( $eprint )
 {
+	my $dir  = "/usr/share/eprints/var/iiif";
+	my $id   = $eprint->value( 'eprintid' );
+	my $file = "$dir/$id.json";
+	my $manifest = '';
+	if ( -r $file )
+	{
+		if ( open(my $fhr, '<', $file) )
+		{
+			while( <$fhr> )
+			{
+				$manifest .= $_;
+			}
+			close($fhr);
+		}
+	}
+	if ( $manifest eq '' )
+	{
+		$manifest = $eprint->export( "IIIFManifest" );
+		if ( open(my $fhw, '>', $file) )
+		{
+			print $fhw $manifest;
+			print $fhw "\n#cached";
+			close($fhw);
+		}
+	}
 	$session->send_http_header( "content_type"=>"application/json" );
-	print $eprint->export( "IIIFManifest" );
+	print $manifest;
 }
 else{
 	Apache::exit( 0 );
 }
 $session->terminate;
+
 

@@ -28,8 +28,9 @@ sub output_dataobj
 	my( $plugin, $eprint ) = @_;
 
 	my $repo     = $plugin->repository;
-	my $exifTool = new Image::ExifTool;
+	my $exiftool = new Image::ExifTool;
 	my $id       = $eprint->uri;
+	$id          =~ s|id/eprint/|cgi/iiif?eprintid=|;
 
 	my $data = {
 		'@context'  => 'http://iiif.io/api/presentation/3/context.json',
@@ -74,7 +75,7 @@ sub output_dataobj
 		my $filetype;
 		my $fileobj  = $doc->stored_file( $doc->get_main );
 		my $filepath = '' . $fileobj->get_local_copy;
-		my $fileinfo = $exifTool->ExtractInfo( $filepath );
+		my $fileinfo = $exiftool->ExtractInfo( $filepath );
 		my $body = {
 			'id'     => $doc->get_url(),
 			'format' => $doc->get_value( 'mime_type' )
@@ -83,13 +84,13 @@ sub output_dataobj
 			$relation           = 'isaudio_mp3ThumbnailVersionOf';
 			$filetype           = 'Sound';
 			$body->{'type'}     = 'Sound';
-			my $mp3info         = $exifTool->GetInfo( 'Duration#' );
+			my $mp3info         = $exiftool->GetInfo( 'Duration#' );
 			$body->{'duration'} = sprintf( '%d', $mp3info->{'Duration #'} );
 		} elsif ($doc->get_value( 'format' ) eq 'image' ) {
 			$relation         = 'islightboxThumbnailVersionOf';
 			$filetype         = 'Image';
 			$body->{'type'}   = 'Image';
-			my $imginfo       = $exifTool->GetInfo('ImageWidth', 'ImageHeight');
+			my $imginfo       = $exiftool->GetInfo('ImageWidth', 'ImageHeight');
 			$body->{'width'}  = $imginfo->{'ImageWidth'};
 			$body->{'height'} = $imginfo->{'ImageHeight'};
 		}
@@ -109,8 +110,8 @@ sub output_dataobj
 				{
 					my $relfileobj = $eprintdoc->stored_file( $eprintdoc->get_main );
 					my $relfilepath = '' . $relfileobj->get_local_copy;
-					my $relinfo = $exifTool->ExtractInfo( $relfilepath );
-					my $relimginfo = $exifTool->GetInfo('ImageWidth', 'ImageHeight');
+					my $relinfo = $exiftool->ExtractInfo( $relfilepath );
+					my $relimginfo = $exiftool->GetInfo('ImageWidth', 'ImageHeight');
 					$thumb->{'width'} = $relimginfo->{'ImageWidth'};
 					$thumb->{'height'} = $relimginfo->{'ImageHeight'};
 				}
