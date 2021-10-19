@@ -1,1 +1,1 @@
-$c->{plugins}{'Export::IIIFManifest'}{params}{disable} = 0;
+$c->{plugins}{'Export::ThumbnailInfo'}{params}{disable} = 0;
