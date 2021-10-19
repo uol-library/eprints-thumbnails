@@ -41,32 +41,32 @@ else
 }
 if ( $eprint )
 {
-	my $dir  = "/usr/share/eprints/var/iiif";
+	my $dir  = "/usr/share/eprints/var/thumbs";
 	my $id   = $eprint->value( 'eprintid' );
 	my $file = "$dir/$id.json";
-	my $manifest = '';
+	my $info = '';
 	if ( -r $file )
 	{
 		if ( open(my $fhr, '<', $file) )
 		{
 			while( <$fhr> )
 			{
-				$manifest .= $_;
+				$info .= $_;
 			}
 			close($fhr);
 		}
 	}
-	if ( $manifest eq '' )
+	if ( $info eq '' )
 	{
-		$manifest = $eprint->export( "IIIFManifest" );
+		$info = $eprint->export( "ThumbnailInfo" );
 		if ( open(my $fhw, '>', $file) )
 		{
-			print $fhw $manifest;
+			print $fhw $info;
 			close($fhw);
 		}
 	}
 	$session->send_http_header( "content_type"=>"application/json" );
-	print $manifest;
+	print $info;
 }
 else{
 	Apache::exit( 0 );
