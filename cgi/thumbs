@@ -3,7 +3,7 @@ use EPrints::EPrint;
 
 use strict;
 my $session = new EPrints::Session;
-Apache::exit( 0 ) unless( defined $session );
+exit( 0 ) unless( defined $session );
 
 my $eprintid = $session->param( 'eprintid' );
 my $emuid = $session->param( 'emuid' );
@@ -32,12 +32,12 @@ elsif ( $emuid )
 	}
 	else
 	{
-		Apache::exit( 0 );
+		exit( 0 );
 	}
 }
 else
 {
-	Apache::exit( 0 );
+	exit( 0 );
 }
 if ( $eprint )
 {
@@ -69,7 +69,7 @@ if ( $eprint )
 	print $info;
 }
 else{
-	Apache::exit( 0 );
+	exit( 0 );
 }
 $session->terminate;
 
