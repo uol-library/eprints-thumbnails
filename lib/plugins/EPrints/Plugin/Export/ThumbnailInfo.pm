@@ -1,7 +1,6 @@
 package EPrints::Plugin::Export::ThumbnailInfo;
 
 use EPrints::Plugin::Export::TextFile;
-use Image::ExifTool;
 use JSON;
 
 @ISA = ( "EPrints::Plugin::Export::TextFile" );

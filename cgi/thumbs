@@ -1,5 +1,6 @@
 use EPrints::Session;
 use EPrints::EPrint;
+use JSON;
 
 use strict;
 my $session = new EPrints::Session;
@@ -7,6 +8,7 @@ exit( 0 ) unless( defined $session );
 
 my $eprintid = $session->param( 'eprintid' );
 my $emuid = $session->param( 'emuid' );
+my $error = { 'code' => undef, 'message' => '' };
 my $eprint;
 if ( $eprintid )
 {
@@ -32,12 +34,14 @@ elsif ( $emuid )
 	}
 	else
 	{
-		exit( 0 );
+		$error->code = '404';
+		$error->message = "Record not found";
 	}
 }
 else
 {
-	exit( 0 );
+	$error->code = '400';
+	$error->message = "Bad request - missing parameter";
 }
 if ( $eprint )
 {
@@ -69,7 +73,14 @@ if ( $eprint )
 	print $info;
 }
 else{
-	exit( 0 );
+	$error->code = '404';
+	$error->message = "Record not found";
+
+}
+if ( defined $error->code )
+{
+	$session->send_http_header( "content_type"=>"application/json" );
+	print JSON->new->pretty(1)->encode( $error );
 }
 $session->terminate;
 
