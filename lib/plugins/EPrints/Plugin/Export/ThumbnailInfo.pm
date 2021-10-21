@@ -27,14 +27,14 @@ sub output_dataobj
 {
 	my( $plugin, $eprint ) = @_;
 
-	my $repo     = $plugin->repository;
-	my $id       = $eprint->uri;
+	my $repo = $plugin->repository;
+	my $id   = $eprint->uri;
 
 	my $data = {
-		'eprintid'        => $eprint->value( 'eprintid' ),
-		'emuid'     => $eprint->value( 'emu_id' ),
-		'title'     => { 'en' => [ $eprint->value( 'title' ) ] },
-		'items'     => [],
+		'eprintid' => $eprint->value( 'eprintid' ),
+		'emuid'    => $eprint->value( 'emu_id' ),
+		'title'    => { 'en' => [ $eprint->value( 'title' ) ] },
+		'items'    => [],
 	};
 
 	my @docs = $eprint->get_all_documents;
