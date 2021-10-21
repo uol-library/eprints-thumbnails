@@ -33,7 +33,8 @@ sub output_dataobj
 	my $data = {
 		'eprintid' => $eprint->value( 'eprintid' ),
 		'emuid'    => $eprint->value( 'emu_id' ),
-		'title'    => { 'en' => [ $eprint->value( 'title' ) ] },
+		'title'    => $eprint->value( 'title' ),
+		'uri'      => $eprint->uri,
 		'items'    => [],
 	};
 
@@ -70,8 +71,7 @@ sub output_dataobj
 			}, \@rels );
 		}
 		push @canvases, {
-			'url'    => $doc->uri,
-			'label'  => $doc->get_value( 'formatdesc' ),
+			'url'    => $doc->get_url(),
 			'format' => $doc->get_value( 'mime_type' ),
 			'thumbs' => \@rels
 		};
