@@ -34,14 +34,14 @@ elsif ( $emuid )
 	}
 	else
 	{
-		$error->code = '404';
-		$error->message = "Record not found";
+		$error->{code} = '404';
+		$error->{message} = "Record not found";
 	}
 }
 else
 {
-	$error->code = '400';
-	$error->message = "Bad request - missing parameter";
+	$error->{code} = '400';
+	$error->{message} = "Bad request - missing parameter";
 }
 if ( $eprint )
 {
@@ -73,8 +73,8 @@ if ( $eprint )
 	print $info;
 }
 else{
-	$error->code = '404';
-	$error->message = "Record not found";
+	$error->{code} = '404';
+	$error->{message} = "Record not found";
 
 }
 if ( defined $error->code )
