@@ -72,7 +72,7 @@ sub output_dataobj
 		push @canvases, {
 			'url'    => $doc->uri,
 			'label'  => $doc->get_value( 'formatdesc' ),
-			'format' => $doc->get_value( 'mime_type' )
+			'format' => $doc->get_value( 'mime_type' ),
 			'thumbs' => \@rels
 		};
 	}
