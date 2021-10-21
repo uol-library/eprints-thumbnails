@@ -77,7 +77,7 @@ else{
 	$error->{message} = "Record not found";
 
 }
-if ( defined $error->code )
+if ( defined $error->{code} )
 {
 	$session->send_http_header( "content_type"=>"application/json" );
 	print JSON->new->pretty(1)->encode( $error );
