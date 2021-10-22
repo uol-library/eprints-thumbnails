@@ -1,6 +1,7 @@
 package EPrints::Plugin::Export::ThumbnailInfo;
 
 use EPrints::Plugin::Export::TextFile;
+use Data::Dumper;
 use JSON;
 
 @ISA = ( "EPrints::Plugin::Export::TextFile" );
@@ -71,22 +72,30 @@ sub output_dataobj
 		}
 
 		my $related = $doc->search_related( $relation );
+		print Dumper( $related );
+
 		if ( $related->count > 0 )
 		{
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
+				my $thumbname = substr $eprintdoc->value( 'main' ), 0, -4;
+				my $thumbpos  = $eprintdoc->value( 'pos' );
+				my $thumbpl   = $repo->get_url() . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
 				my $thumb = {
-					'url'    => $eprintdoc->get_url(),
-					'format' => $eprintdoc->value( 'mime_type' ),
+					'url'      => $eprintdoc->get_url(),
+					'format'   => $eprintdoc->value( 'mime_type' ),
+					'position' => $thumbpos,
+					'name'     => $thumbname,
+					'permalink' => $thumbpl,
 				};
 				push @$rels, $thumb;
 
 			}, \@rels );
 		}
 		push @canvases, {
-			'url'    => $doc->get_url(),
-			'format' => $doc->get_value( 'mime_type' ),
-			'thumbs' => \@rels
+			'url'        => $doc->get_url(),
+			'format'     => $doc->get_value( 'mime_type' ),
+			'thumbnails' => \@rels
 		};
 	}
 
