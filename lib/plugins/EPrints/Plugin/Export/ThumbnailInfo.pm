@@ -81,10 +81,10 @@ sub output_dataobj
 				my $thumbpos  = $eprintdoc->value( 'pos' );
 				my $thumbpl   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
 				my $thumb = {
-					'url'      => $eprintdoc->get_url(),
-					'format'   => $eprintdoc->value( 'mime_type' ),
-					'position' => $thumbpos,
-					'name'     => $thumbname,
+					'url'       => $eprintdoc->get_url(),
+					'format'    => $eprintdoc->value( 'mime_type' ),
+					'position'  => $thumbpos,
+					'name'      => $thumbname,
 					'permalink' => $thumbpl,
 				};
 				push @$rels, $thumb;
