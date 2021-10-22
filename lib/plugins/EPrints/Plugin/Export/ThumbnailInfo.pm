@@ -79,7 +79,7 @@ sub output_dataobj
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
 				my $thumbname = substr $eprintdoc->value( 'main' ), 0, -4;
 				my $thumbpos  = $eprintdoc->value( 'pos' );
-				my $thumbpl   = $repo->get_url() . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
+				my $thumbpl   = $repo->{config}->{http_url} . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
 				my $thumb = {
 					'url'      => $eprintdoc->get_url(),
 					'format'   => $eprintdoc->value( 'mime_type' ),
