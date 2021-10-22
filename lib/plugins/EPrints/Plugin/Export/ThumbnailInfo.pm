@@ -72,7 +72,6 @@ sub output_dataobj
 		}
 
 		my $related = $doc->search_related( $relation );
-		print Dumper( $related );
 
 		if ( $related->count > 0 )
 		{
