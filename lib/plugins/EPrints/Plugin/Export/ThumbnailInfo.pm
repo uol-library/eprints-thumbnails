@@ -77,7 +77,7 @@ sub output_dataobj
 		{
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
-				my $thumbname = substr $eprintdoc->value( 'main' ), 0, -4;
+				(my $thumbname = $eprintdoc->value( 'main' )) =~ s/\.[^.]+$//;
 				my $thumbpos  = $doc->value( 'pos' );
 				my $thumbpl   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
 				my $thumb = {
