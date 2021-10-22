@@ -58,7 +58,7 @@ sub output_dataobj
 	for( my $i = 0; $i < scalar @docs; $i++ )
 	{
 		my $doc = $docs[$i];
-		my @rels;
+		my %rels;
 		my $relation;
 		my $filetype;
 		if ( $doc->get_value( 'format' ) eq 'audio' )
@@ -86,14 +86,14 @@ sub output_dataobj
 					'name'      => $thumbname,
 					'permalink' => $thumbpl,
 				};
-				push @$rels, $thumb;
+				$rels->{$thumbname} = $thumb;
 
-			}, \@rels );
+			}, \%rels );
 		}
 		push @canvases, {
 			'url'        => $doc->get_url(),
 			'format'     => $doc->get_value( 'mime_type' ),
-			'thumbnails' => \@rels
+			'thumbnails' => \%rels
 		};
 	}
 
