@@ -77,14 +77,16 @@ sub output_dataobj
 		{
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
+				my $thumbpos  = $doc->value( 'pos' );
 				if ( $doc->get_value( 'format' ) eq 'audio' )
 				{
-					$rels->{'mp3'} = $eprintdoc->get_url();
+					$rels->{'mp3url'} = $eprintdoc->get_url();
+					$rels->{'permalink'}   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.hasaudio_mp3ThumbnailVersion/' . $doc->get_value( 'main' );
+
 				}
 				else
 				{
 					(my $thumbname = $eprintdoc->value( 'main' )) =~ s/\.[^.]+$//;
-					my $thumbpos  = $doc->value( 'pos' );
 					my $thumbpl   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
 					my $thumb = {
 						'url'       => $eprintdoc->get_url(),
