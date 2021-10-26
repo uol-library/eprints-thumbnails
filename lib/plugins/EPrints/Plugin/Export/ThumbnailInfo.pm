@@ -76,18 +76,24 @@ sub output_dataobj
 		if ( $related->count > 0 )
 		{
 			$related->map( sub {
-				my( $session, $dataset, $eprintdoc, $rels ) = @_;
-				(my $thumbname = $eprintdoc->value( 'main' )) =~ s/\.[^.]+$//;
-				my $thumbpos  = $doc->value( 'pos' );
-				my $thumbpl   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
-				my $thumb = {
-					'url'       => $eprintdoc->get_url(),
-					'format'    => $eprintdoc->value( 'mime_type' ),
-					'name'      => $thumbname,
-					'permalink' => $thumbpl,
-				};
-				$rels->{$thumbname} = $thumbpl;
-
+				if ( $doc->get_value( 'format' ) eq 'audio' )
+				{
+					$rels->{'mp3'} = $eprintdoc->get_url();
+				}
+				else
+				{
+					my( $session, $dataset, $eprintdoc, $rels ) = @_;
+					(my $thumbname = $eprintdoc->value( 'main' )) =~ s/\.[^.]+$//;
+					my $thumbpos  = $doc->value( 'pos' );
+					my $thumbpl   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
+					my $thumb = {
+						'url'       => $eprintdoc->get_url(),
+						'format'    => $eprintdoc->value( 'mime_type' ),
+						'name'      => $thumbname,
+						'permalink' => $thumbpl,
+					};
+					$rels->{$thumbname} = $thumbpl;
+				}
 			}, \%rels );
 		}
 		push @canvases, {
