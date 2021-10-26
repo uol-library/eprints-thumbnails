@@ -45,7 +45,8 @@ else
 }
 if ( $eprint )
 {
-	my $dir  = "/usr/share/eprints/var/thumbs";
+	my $dir  = $session->get_repository->config( "variables_path" ) . '/thumbs';
+	unless( -d $dir) { mkdir $dir, '0755' };
 	my $id   = $eprint->value( 'eprintid' );
 	my $file = "$dir/$id.json";
 	my $info = '';

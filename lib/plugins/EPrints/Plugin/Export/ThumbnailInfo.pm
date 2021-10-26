@@ -86,7 +86,7 @@ sub output_dataobj
 					'name'      => $thumbname,
 					'permalink' => $thumbpl,
 				};
-				$rels->{$thumbname} = $thumb;
+				$rels->{$thumbname} = $thumbpl;
 
 			}, \%rels );
 		}
