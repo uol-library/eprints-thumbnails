@@ -60,7 +60,6 @@ if ( $eprint )
 				$info .= $_;
 			}
 			close($fhr);
-			$info .= "\n//FUCKER";
 		}
 	}
 	if ( $info eq '' )
