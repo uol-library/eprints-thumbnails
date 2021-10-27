@@ -80,7 +80,7 @@ sub output_dataobj
 				my $thumbpos  = $doc->value( 'pos' );
 				if ( $doc->get_value( 'format' ) eq 'audio' )
 				{
-					$rels->{'mp3url'} = $eprintdoc->get_url();
+					$rels->{'url'} = $eprintdoc->get_url();
 					$rels->{'permalink'}   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.hasaudio_mp3ThumbnailVersion/' . $doc->get_value( 'main' );
 
 				}
