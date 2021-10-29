@@ -6,6 +6,7 @@ $c->{on_generate_thumbnails} => sub
     my $dir  = $session->get_repository->config( "variables_path" ) . '/thumbs';
     my $id   = $eprint->value( 'eprintid' );
     my $file = "$dir/$id.json";
+    print STDOUT $file;
     if ( -e $file )
     {
         unlink $file;
