@@ -29,21 +29,6 @@ sub output_dataobj
 
 	my $repo = $plugin->repository;
 
-	# Should check here to see if there are any queued thmbnailing events
-	# If there are, return JSON error code and message
-	#my $thumbnailing_events = $repo->dataset( "event_queue" )->search(
-	#	'filters' => [
-	#		{
-	#			'meta_fields' => [ 'pluginid' ],
-	#			'value' => 'Convert::Thumbnails',
-	#		}
-	#	]
-	#);
-	#if ( $thumbnailing_events->count > 0 )
-	#{
-	#	return JSON->new->pretty(1)->encode( { 'code' => '425', 'message' => 'Too Early: thumbnails have not been processed yet' } );
-	#}
-	
 	my $data = {
 		'eprintid' => $eprint->value( 'eprintid' ),
 		'emuid'    => $eprint->value( 'emu_id' ),
