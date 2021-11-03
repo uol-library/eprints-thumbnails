@@ -8,9 +8,9 @@
         <file>
           <filename>epm/eprints-thumbnails/cfg/cfg.d/thumbnail-info.pl</filename>
           <mime_type>text/plain</mime_type>
-          <hash>d8d5b9112610d3a0893c50d5eb22b9df</hash>
+          <hash>385b0f39bb5492680c072156ed81aa16</hash>
           <hash_type>MD5</hash_type>
-          <filesize>808</filesize>
+          <filesize>372</filesize>
         </file>
         <file>
           <filename>epm/eprints-thumbnails/cgi/thumbs</filename>
