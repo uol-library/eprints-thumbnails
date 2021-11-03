@@ -1,12 +1,15 @@
 use EPrints::Session;
 use EPrints::EPrint;
+use File::Path qw(make_path);
+use JSON;
 
 use strict;
 my $session = new EPrints::Session;
-Apache::exit( 0 ) unless( defined $session );
+exit( 0 ) unless( defined $session );
 
 my $eprintid = $session->param( 'eprintid' );
 my $emuid = $session->param( 'emuid' );
+my $error = { 'code' => undef, 'message' => '' };
 my $eprint;
 if ( $eprintid )
 {
@@ -32,16 +35,19 @@ elsif ( $emuid )
 	}
 	else
 	{
-		Apache::exit( 0 );
+		$error->{code} = '404';
+		$error->{message} = "Record not found";
 	}
 }
 else
 {
-	Apache::exit( 0 );
+	$error->{code} = '400';
+	$error->{message} = "Bad request - missing parameter";
 }
 if ( $eprint )
 {
-	my $dir  = "/usr/share/eprints/var/thumbs";
+	my $dir  = $session->get_repository->config( "variables_path" ) . '/thumbs';
+	unless( -d $dir) { make_path($dir, { chmod=> 0755 } ); };
 	my $id   = $eprint->value( 'eprintid' );
 	my $file = "$dir/$id.json";
 	my $info = '';
@@ -69,7 +75,14 @@ if ( $eprint )
 	print $info;
 }
 else{
-	Apache::exit( 0 );
+	$error->{code} = '404';
+	$error->{message} = "Record not found";
+
+}
+if ( defined $error->{code} )
+{
+	$session->send_http_header( "content_type"=>"application/json" );
+	print JSON->new->pretty(1)->encode( $error );
 }
 $session->terminate;
 

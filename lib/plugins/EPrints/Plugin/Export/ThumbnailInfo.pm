@@ -1,7 +1,7 @@
 package EPrints::Plugin::Export::ThumbnailInfo;
 
 use EPrints::Plugin::Export::TextFile;
-use Image::ExifTool;
+use Data::Dumper;
 use JSON;
 
 @ISA = ( "EPrints::Plugin::Export::TextFile" );
@@ -27,14 +27,14 @@ sub output_dataobj
 {
 	my( $plugin, $eprint ) = @_;
 
-	my $repo     = $plugin->repository;
-	my $id       = $eprint->uri;
+	my $repo = $plugin->repository;
 
 	my $data = {
-		'eprintid'        => $eprint->value( 'eprintid' ),
-		'emuid'     => $eprint->value( 'emu_id' ),
-		'title'     => { 'en' => [ $eprint->value( 'title' ) ] },
-		'items'     => [],
+		'eprintid' => $eprint->value( 'eprintid' ),
+		'emuid'    => $eprint->value( 'emu_id' ),
+		'title'    => $eprint->value( 'title' ),
+		'uri'      => $eprint->uri,
+		'items'    => [],
 	};
 
 	my @docs = $eprint->get_all_documents;
@@ -43,7 +43,7 @@ sub output_dataobj
 	for( my $i = 0; $i < scalar @docs; $i++ )
 	{
 		my $doc = $docs[$i];
-		my @rels;
+		my %rels;
 		my $relation;
 		my $filetype;
 		if ( $doc->get_value( 'format' ) eq 'audio' )
@@ -57,23 +57,36 @@ sub output_dataobj
 		}
 
 		my $related = $doc->search_related( $relation );
+
 		if ( $related->count > 0 )
 		{
 			$related->map( sub {
 				my( $session, $dataset, $eprintdoc, $rels ) = @_;
-				my $thumb = {
-					'url'    => $eprintdoc->get_url(),
-					'format' => $eprintdoc->value( 'mime_type' ),
-				};
-				push @$rels, $thumb;
+				my $thumbpos  = $doc->value( 'pos' );
+				if ( $doc->get_value( 'format' ) eq 'audio' )
+				{
+					$rels->{'url'} = $eprintdoc->get_url();
+					$rels->{'permalink'}   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.hasaudio_mp3ThumbnailVersion/' . $doc->get_value( 'main' );
 
-			}, \@rels );
+				}
+				else
+				{
+					(my $thumbname = $eprintdoc->value( 'main' )) =~ s/\.[^.]+$//;
+					my $thumbpl   = $repo->{config}->{http_url} . '/' . $eprint->value( 'eprintid' ) . '/' . $thumbpos . '.has' . $thumbname . 'ThumbnailVersion/' . $doc->get_value( 'main' );
+					my $thumb = {
+						'url'       => $eprintdoc->get_url(),
+						'format'    => $eprintdoc->value( 'mime_type' ),
+						'name'      => $thumbname,
+						'permalink' => $thumbpl,
+					};
+					$rels->{$thumbname} = $thumbpl;
+				}
+			}, \%rels );
 		}
 		push @canvases, {
-			'url'    => $doc->uri,
-			'label'  => $doc->get_value( 'formatdesc' ),
-			'format' => $doc->get_value( 'mime_type' )
-			'thumbs' => \@rels
+			'url'        => $doc->get_url(),
+			'format'     => $doc->get_value( 'mime_type' ),
+			'thumbnails' => \%rels
 		};
 	}
 

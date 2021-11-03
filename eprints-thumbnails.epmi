@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<epm xmlns='http://eprints.org/ep2/data/2.0' id='http://digitallibrary.dl.test/id/epm/eprints-thumbnails'>
+  <epmid>eprints-thumbnails</epmid>
+  <uri>http://digitallibrary.dl.test/id/epm/eprints-thumbnails</uri>
+  <documents>
+    <document>
+      <files>
+        <file>
+          <filename>epm/eprints-thumbnails/cfg/cfg.d/thumbnail-info.pl</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>385b0f39bb5492680c072156ed81aa16</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>372</filesize>
+        </file>
+        <file>
+          <filename>epm/eprints-thumbnails/cgi/thumbs</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>d9e6d067faf360685433700be5f3e68a</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>1743</filesize>
+        </file>
+        <file>
+          <filename>plugins/EPrints/Plugin/Export/ThumbnailInfo.pm</filename>
+          <mime_type>inode/symlink</mime_type>
+          <hash>e1446d322da997d16dd5b70b44d29a85</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>2330</filesize>
+        </file>
+      </files>
+      <mime_type>inode/symlink</mime_type>
+      <format>other</format>
+      <main>plugins/EPrints/Plugin/Export/ThumbnailInfo.pm</main>
+      <content>install</content>
+    </document>
+  </documents>
+  <version>0.0.1</version>
+  <creators>
+    <item>
+      <name>
+        <family>Edwards</family>
+        <given>Peter</given>
+      </name>
+      <id>p.l.edwards@leeds.ac.uk</id>
+    </item>
+  </creators>
+  <datestamp>2021-11-03 15:06:51</datestamp>
+  <title>EPrints thumbnail information</title>
+  <description>An EPrints Plugin to expose thumbnail information via a JSON endpoint</description>
+  <requirements></requirements>
+  <home_page>https://github.com/uol-library/eprints-thumbnails</home_page>
+</epm>
