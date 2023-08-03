@@ -7,9 +7,10 @@ use strict;
 my $session = new EPrints::Session;
 exit( 0 ) unless( defined $session );
 
+my $request  = $session->get_request;
 my $eprintid = $session->param( 'eprintid' );
-my $emuid = $session->param( 'emuid' );
-my $error = { 'code' => undef, 'message' => '' };
+my $emuid    = $session->param( 'emuid' );
+my $error    = { 'code' => undef, 'message' => '' };
 my $eprint;
 if ( $eprintid )
 {
@@ -71,8 +72,9 @@ if ( $eprint )
 			close($fhw);
 		}
 	}
-	$session->send_http_header( "content_type"=>"application/json" );
-	print $info;
+        EPrints::Apache::AnApache::header_out( $request, "Access-Control-Allow-Origin", "*" );
+        $request->content_type( "application/json; charset=UTF-8" );
+        print $info;
 }
 else{
 	$error->{code} = '404';
@@ -81,7 +83,8 @@ else{
 }
 if ( defined $error->{code} )
 {
-	$session->send_http_header( "content_type"=>"application/json" );
+	EPrints::Apache::AnApache::header_out( $request, "Access-Control-Allow-Origin", "*" );
+        $request->content_type( "application/json; charset=UTF-8" );
 	print JSON->new->pretty(1)->encode( $error );
 }
 $session->terminate;
