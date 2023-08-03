@@ -7,82 +7,85 @@ use strict;
 my $session = new EPrints::Session;
 exit( 0 ) unless( defined $session );
 
+my $request = $session->get_request;
 my $eprintid = $session->param( 'eprintid' );
 my $emuid = $session->param( 'emuid' );
 my $error = { 'code' => undef, 'message' => '' };
 my $eprint;
 if ( $eprintid )
 {
-	$eprint = EPrints::DataObj::EPrint->new( 
-		$session, 
-		$eprintid, 
-		$session->get_repository->get_dataset( "archive" )
-	);
+    $eprint = EPrints::DataObj::EPrint->new( 
+        $session, 
+        $eprintid, 
+        $session->get_repository->get_dataset( "archive" )
+    );
 }
 elsif ( $emuid )
 {
-	my $results = $session->get_repository->get_dataset( 'archive' )->search(
-		'filters' => [
-			{
-				'meta_fields' => [ 'emu_id' ],
-				'value' => $emuid,
-			}
-		]
-	);
-	if ( $results->count > 0 )
-	{
-		$eprint = $results->item( 0 );
-	}
-	else
-	{
-		$error->{code} = '404';
-		$error->{message} = "Record not found";
-	}
+    my $results = $session->get_repository->get_dataset( 'archive' )->search(
+        'filters' => [
+            {
+                'meta_fields' => [ 'emu_id' ],
+                'value' => $emuid,
+            }
+        ]
+    );
+    if ( $results->count > 0 )
+    {
+        $eprint = $results->item( 0 );
+    }
+    else
+    {
+        $error->{code} = '404';
+        $error->{message} = "Record not found";
+    }
 }
 else
 {
-	$error->{code} = '400';
-	$error->{message} = "Bad request - missing parameter";
+    $error->{code} = '400';
+    $error->{message} = "Bad request - missing parameter";
 }
 if ( $eprint )
 {
-	my $dir  = $session->get_repository->config( "variables_path" ) . '/thumbs';
-	unless( -d $dir) { make_path($dir, { chmod=> 0755 } ); };
-	my $id   = $eprint->value( 'eprintid' );
-	my $file = "$dir/$id.json";
-	my $info = '';
-	if ( -r $file )
-	{
-		if ( open(my $fhr, '<', $file) )
-		{
-			while( <$fhr> )
-			{
-				$info .= $_;
-			}
-			close($fhr);
-		}
-	}
-	if ( $info eq '' )
-	{
-		$info = $eprint->export( "ThumbnailInfo" );
-		if ( open(my $fhw, '>', $file) )
-		{
-			print $fhw $info;
-			close($fhw);
-		}
-	}
-	$session->send_http_header( "content_type"=>"application/json" );
-	print $info;
+    my $dir  = $session->get_repository->config( "variables_path" ) . '/thumbs';
+    unless( -d $dir) { make_path($dir, { chmod=> 0755 } ); };
+    my $id   = $eprint->value( 'eprintid' );
+    my $file = "$dir/$id.json";
+    my $info = '';
+    if ( -r $file )
+    {
+        if ( open(my $fhr, '<', $file) )
+        {
+            while( <$fhr> )
+            {
+                $info .= $_;
+            }
+            close($fhr);
+        }
+    }
+    if ( $info eq '' )
+    {
+        $info = $eprint->export( "ThumbnailInfo" );
+        if ( open(my $fhw, '>', $file) )
+        {
+            print $fhw $info;
+            close($fhw);
+        }
+    }
+    EPrints::Apache::AnApache::header_out( $request, "Access-Control-Allow-Origin", "*" );
+    $request->content_type( "application/json; charset=UTF-8" );
+    print $info;
 }
 else{
-	$error->{code} = '404';
-	$error->{message} = "Record not found";
+    $error->{code} = '404';
+    $error->{message} = "Record not found";
 
 }
 if ( defined $error->{code} )
 {
-	$session->send_http_header( "content_type"=>"application/json" );
-	print JSON->new->pretty(1)->encode( $error );
+    EPrints::Apache::AnApache::header_out( $request, "Access-Control-Allow-Origin", "*" );
+    $request->content_type( "application/json; charset=UTF-8" );
+    print JSON->new->pretty(1)->encode( $error );
 }
 $session->terminate;
 
