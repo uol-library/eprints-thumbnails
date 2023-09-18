@@ -32,7 +32,6 @@ sub output_dataobj
 	my $data = {
 		'eprintid' => $eprint->value( 'eprintid' ),
 		'emuid'    => $eprint->value( 'emu_id' ),
-		'title'    => $eprint->value( 'title' ),
 		'uri'      => $eprint->uri,
 		'items'    => [],
 	};
