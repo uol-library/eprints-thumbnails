@@ -127,6 +127,8 @@ if ( $clear )
 	}
 }
 
+my $eprintids;
+
 # from / num syntax
 if ( $from )
 {
