@@ -155,7 +155,7 @@ if ( $from )
 # command line syntax
 if( scalar @ARGV == 0 )
 {
-	print "Please supply EPrint IDs or a rnage of records using from and num parameters\n";
+	print "Please supply EPrint IDs or a range of records using from and num parameters\n";
 	exit;
 }
 else
@@ -167,18 +167,18 @@ else
 sub cache_json
 {
 	my( $session, @ids ) = @_;
-
-	if( !@ids )
+	print( scalar @ids );
+	if( scalar @ids == 0 )
 	{
 		print STDOUT "No EPrint IDs supplied to cache_json\n";
 	}
 	else
 	{
-		foreach my $eprintid ( @ids )
+                foreach ( @ids )
 		{
-			print STDOUT "Generating thumbnail JSON for EPrint ID: $eprintid\n";
+			print STDOUT "Generating thumbnail JSON for EPrint ID: $_\n";
 		}
 	}
-}	
+}
 
 exit;
