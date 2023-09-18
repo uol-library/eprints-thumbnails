@@ -174,9 +174,8 @@ sub cache_json
 	}
 	else
 	{
-		foreach ( @ids )
+		foreach my $eprintid ( @ids )
 		{
-			my $eprintid = $_;
 			print STDOUT "Generating thumbnail JSON for EPrint ID: $eprintid\n";
 		}
 	}
