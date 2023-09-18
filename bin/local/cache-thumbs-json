@@ -140,7 +140,7 @@ if ( $from )
 	{
 		print "Generating JSON from $from for $num records\n";
 		@eprintids = $list->ids( $from, $num );
-		cache_json( $session, $eprintids );
+		cache_json( $session, @eprintids );
 	}
 	else
 	{
