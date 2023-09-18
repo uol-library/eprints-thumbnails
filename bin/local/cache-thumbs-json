@@ -21,19 +21,19 @@ B<cache-thumbs-json> [I<archive_id>]  [B<options>] [I<values>]...
 
 Create a single JSON thumbnail file for a given EPrint:
 
-B<cache-thumbs-json> [I<archive_id>] [I<value>]
+B<cache-thumbs-json> [I<archive_id>] [I<eprint_id>]
 
 Create JSON thumbnail files for multiple EPrints:
 
-B<cache-thumbs-json> [I<archive_id>] [I<value>] [I<value>] [I<value>]...
+B<cache-thumbs-json> [I<archive_id>] [I<eprint_id>] [I<eprint_id>] [I<eprint_id>]...
 
 Remove a single JSON thumbnail file for a given EPrint:
 
-B<cache-thumbs-json> [I<archive_id>] --remove [I<value>]
+B<cache-thumbs-json> [I<archive_id>] --remove [I<eprint_id>]
 
 Remove JSON thumbnail files for multiple EPrints:
 
-B<cache-thumbs-json> [I<archive_id>] --remove [I<value>] [I<value>] [I<value>]...
+B<cache-thumbs-json> [I<archive_id>] --remove [I<eprint_id>] [I<eprint_id>] [I<eprint_id>]...
 
 Clear the JSON thumbnail file cache
 
