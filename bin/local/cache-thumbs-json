@@ -127,7 +127,7 @@ if ( $clear )
 	}
 }
 
-my $eprintids;
+my @eprintids;
 
 # from / num syntax
 if ( $from )
@@ -139,14 +139,14 @@ if ( $from )
 	if ( $num )
 	{
 		print "Generating JSON from $from for $num records\n";
-		$eprintids = $list->ids( $from, $num );
+		@eprintids = $list->ids( $from, $num );
 		cache_json( $session, $eprintids );
 	}
 	else
 	{
 		print "Generating JSON from $from for all other records\n";
-		$eprintids = $list->ids( $from );
-		cache_json( $session, $eprintids );
+		@eprintids = $list->ids( $from );
+		cache_json( $session, @eprintids );
 	}
 	print "done\n";
 	exit;
