@@ -160,23 +160,25 @@ if( scalar @ARGV == 0 )
 }
 else
 {
-	cache_json( $session, $ARGV );
+	print "Regenerating thumbnail JSON using command line arguments\n";
+	cache_json( $session, @ARGV );
 }
 
 
 sub cache_json
 {
 	my( $session, @ids ) = @_;
-	print( scalar @ids );
+
 	if( scalar @ids == 0 )
 	{
 		print STDOUT "No EPrint IDs supplied to cache_json\n";
 	}
 	else
 	{
-                foreach ( @ids )
+        foreach ( @ids )
 		{
-			print STDOUT "Generating thumbnail JSON for EPrint ID: $_\n";
+			my $eprintid = $_;
+			print STDOUT "Generating thumbnail JSON for EPrint ID: $eprintid\n";
 		}
 	}
 }
