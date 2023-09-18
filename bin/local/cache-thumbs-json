@@ -155,7 +155,7 @@ if ( $from )
 # command line syntax
 if( scalar @ARGV == 0 )
 {
-	print "Please supply EPrint IDs or a rnage of records using From and num parameters";
+	print "Please supply EPrint IDs or a rnage of records using from and num parameters\n";
 	exit;
 }
 else
@@ -174,10 +174,10 @@ sub cache_json
 	}
 	else
 	{
-		for( @ids )
+		foreach ( @ids )
 		{
 			my $eprintid = $_;
-			print STDOUT "Generating thumbnail JSON for EPrint ID: $eprintid";
+			print STDOUT "Generating thumbnail JSON for EPrint ID: $eprintid\n";
 		}
 	}
 }	
