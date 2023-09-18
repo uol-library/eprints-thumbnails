@@ -1,0 +1,183 @@
+#!/usr/bin/perl -w
+
+######################################################################
+#
+#
+######################################################################
+
+=pod
+
+=for Pod2Wiki
+
+=head1 NAME
+
+B<cache-thumbs-json> - EPrints administration tool to cache thumbnail JSON files (options to clear or remove)
+
+=head1 SYNOPSIS
+
+B<cache-thumbs-json> [I<archive_id>]  [B<options>] [I<values>]...
+
+=head2 EXAMPLES
+
+Create a single JSON thumbnail file for a given EPrint:
+
+B<cache-thumbs-json> [I<archive_id>] [I<value>]
+
+Create JSON thumbnail files for multiple EPrints:
+
+B<cache-thumbs-json> [I<archive_id>] [I<value>] [I<value>] [I<value>]...
+
+Remove a single JSON thumbnail file for a given EPrint:
+
+B<cache-thumbs-json> [I<archive_id>] --remove [I<value>]
+
+Remove JSON thumbnail files for multiple EPrints:
+
+B<cache-thumbs-json> [I<archive_id>] --remove [I<value>] [I<value>] [I<value>]...
+
+Clear the JSON thumbnail file cache
+
+B<cache-thumbs-json> I<archive_id> --clear
+
+B<Peter Edwards - p.l.edwards@leeds.ac.uk>
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--help>
+
+Print a brief help message and exit.
+
+=item B<--remove>
+
+Deletes the JSON thumbnail file for the given EPrint(s)
+
+=item B<--clear>
+
+Clears all JSON thumbnail files for the repository
+
+
+=back   
+
+
+=cut
+
+use FindBin;
+use lib "/usr/share/eprints/perl_lib";
+use EPrints;
+use Data::Dumper;
+use File::Path;
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+
+my $remove = 0;
+my $clear  = 0;
+my $help   = 0;
+my $from   = 0;
+my $num    = 0;
+
+Getopt::Long::Configure("permute");
+
+GetOptions( 
+	'help|?' => \$help,
+	'clear'  => \$clear,
+	'remove' => \$remove,
+	'from=i' => \$from,
+	'num=i'  => \$num,
+);
+pod2usage( 1 ) if $help;
+pod2usage( 2 ) if ( scalar @ARGV == 0 );
+
+# Set STDOUT to auto flush (without needing a \n)
+$|=1;
+
+my $repoid = shift @ARGV;
+pod2usage(1) unless defined $repoid;
+
+my $session = new EPrints::Session( 1 , $repoid, 0 );
+if( ! defined $session )
+{
+    print STDERR "Failed to load repository: $repoid\n";
+    exit 1;
+}
+
+# Clear the cache?
+if ( $clear )
+{
+	print "Are you sure you want to clear the cache? (y/n): ";
+	chomp( my $confirm = <STDIN> );
+	if ( $confirm eq 'y' )
+	{
+		print "Clearing cache...\n";
+		my $dir  = $session->get_repository->config( "variables_path" ) . '/thumbs/*';
+		while ($_ = glob( $dir ))
+		{
+			next if -d $_;
+			unlink($_)
+		}
+		print "Finished!\n";
+		exit;
+	}
+	else
+	{
+		print "Exiting\n";
+		exit;
+	}
+}
+
+# from / num syntax
+if ( $from )
+{
+	my $dataset = $session->get_repository->dataset( 'archive' );
+	my $list = $dataset->search();
+	my $thismany = $list->count();
+	print "Found $thismany eprints in total\n";
+	if ( $num )
+	{
+		print "Generating JSON from $from for $num records\n";
+		$eprintids = $list->ids( $from, $num );
+		cache_json( $session, $eprintids );
+	}
+	else
+	{
+		print "Generating JSON from $from for all other records\n";
+		$eprintids = $list->ids( $from );
+		cache_json( $session, $eprintids );
+	}
+	print "done\n";
+	exit;
+}
+
+# command line syntax
+if( scalar @ARGV == 0 )
+{
+	print "Please supply EPrint IDs or a rnage of records using From and num parameters";
+	exit;
+}
+else
+{
+	cache_json( $session, $ARGV );
+}
+
+
+sub cache_json
+{
+	my( $session, @ids ) = @_;
+
+	if( !@ids )
+	{
+		print STDOUT "No EPrint IDs supplied to cache_json\n";
+	}
+	else
+	{
+		for( @ids )
+		{
+			my $eprintid = $_;
+			print STDOUT "Generating thumbnail JSON for EPrint ID: $eprintid";
+		}
+	}
+}	
+
+exit;
