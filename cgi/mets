@@ -12,10 +12,10 @@ my $eprintid = $session->param( 'eprintid' );
 my $uolid    = $session->param( 'uolid' );
 my $emuid    = $session->param( 'emuid' );
 my $error    = { 'code' => undef, 'message' => '' };
-my $eprint;
+my $epr;
 if ( $eprintid )
 {
-	$eprint = EPrints::DataObj::EPrint->new( 
+	$epr = EPrints::DataObj::EPrint->new( 
 		$session, 
 		$eprintid, 
 		$session->get_repository->get_dataset( "archive" )
@@ -33,7 +33,7 @@ elsif ( $emuid )
 	);
 	if ( $results->count > 0 )
 	{
-		$eprint = $results->item( 0 );
+		$epr = $results->item( 0 );
 	}
 	else
 	{
@@ -53,7 +53,7 @@ elsif ( $uolid )
 	);
 	if ( $results->count > 0 )
 	{
-		$eprint = $results->item( 0 );
+		$epr = $results->item( 0 );
 	}
 	else
 	{
@@ -67,16 +67,15 @@ else
 	$error->{message} = "Bad request - no valid parameters";
 
 }
-
-if ( ! defined $error->{code} && $eprint )
+if ( $epr )
 {
-	my $id   = $eprint->value( 'eprintid' );
+	my $id   = $epr->value( 'eprintid' );
     my $metsurl = "https://digital.library.leeds.ac.uk/cgi/export/eprint/" . $id . "/DLMETS/digitallibrary-eprint-" . $id . ".xml";
     EPrints::Apache::AnApache::send_status_line( $request, 302, "Moved Temporarily" );
     EPrints::Apache::AnApache::header_out( $request, "Location", $metsurl );
-    #EPrints::Apache::AnApache::send_http_header( $o{request} );
 }
-else{
+else
+{
 	$error->{code} = '404';
 	$error->{message} = "No valid Eprints Record found";
 
