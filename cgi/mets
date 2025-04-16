@@ -8,8 +8,8 @@ my $session = new EPrints::Session;
 exit( 0 ) unless( defined $session );
 
 my $request  = $session->get_request;
-my $identifier = $session->param( 'uolid' );
 my $eprintid = $session->param( 'eprintid' );
+my $uolid    = $session->param( 'uolid' );
 my $emuid    = $session->param( 'emuid' );
 my $error    = { 'code' => undef, 'message' => '' };
 my $eprint;
@@ -38,16 +38,16 @@ elsif ( $emuid )
 	else
 	{
 		$error->{code} = '404';
-		$error->{message} = "Record not found";
+		$error->{message} = "Record not found for EMu ID " . $emuid;
 	}
 }
-elsif ( $identifier )
+elsif ( $uolid )
 {
 	my $results = $session->get_repository->get_dataset( 'archive' )->search(
 		'filters' => [
 			{
 				'meta_fields' => [ 'uol_identifier' ],
-				'value' => $identifier,
+				'value' => $uolid,
 			}
 		]
 	);
@@ -58,7 +58,7 @@ elsif ( $identifier )
 	else
 	{
 		$error->{code} = '404';
-		$error->{message} = "Record not found";
+		$error->{message} = "Record not found for identifier " . $uolid;
 	}
 }
 else
@@ -76,7 +76,7 @@ if ( $eprint )
 }
 else{
 	$error->{code} = '404';
-	$error->{message} = "Record not found";
+	$error->{message} = "No valid Eprints Record found";
 
 }
 if ( defined $error->{code} )
