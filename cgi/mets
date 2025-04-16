@@ -69,8 +69,10 @@ else
 if ( $eprint )
 {
 	my $id   = $eprint->value( 'eprintid' );
-    my $metsurl = "/cgi/export/eprint/" . $id . "/DLMETS/digitallibrary-eprint-" . $id . ".xml";
+    my $metsurl = "https://digital.library.leeds.ac.uk/cgi/export/eprint/" . $id . "/DLMETS/digitallibrary-eprint-" . $id . ".xml";
+    EPrints::Apache::AnApache::send_status_line( $request, 302, "Moved Temporarily" );
     EPrints::Apache::AnApache::header_out( $request, "Location", $metsurl );
+    #EPrints::Apache::AnApache::send_http_header( $o{request} );
 }
 else{
 	$error->{code} = '404';
