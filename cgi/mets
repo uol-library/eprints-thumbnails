@@ -21,7 +21,7 @@ if ( $eprintid )
 		$session->get_repository->get_dataset( "archive" )
 	);
 }
-elsif ( $emuid )
+if ( $emuid )
 {
 	my $results = $session->get_repository->get_dataset( 'archive' )->search(
 		'filters' => [
@@ -41,7 +41,7 @@ elsif ( $emuid )
 		$error->{message} = "Record not found for EMu ID " . $emuid;
 	}
 }
-elsif ( $uolid )
+if ( $uolid )
 {
 	my $results = $session->get_repository->get_dataset( 'archive' )->search(
 		'filters' => [
@@ -60,11 +60,6 @@ elsif ( $uolid )
 		$error->{code} = '404';
 		$error->{message} = "Record not found for identifier " . $uolid;
 	}
-}
-else
-{
-	$error->{code} = '400';
-	$error->{message} = "Bad request - missing parameter";
 }
 if ( $eprint )
 {
