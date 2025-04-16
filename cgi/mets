@@ -8,7 +8,7 @@ my $session = new EPrints::Session;
 exit( 0 ) unless( defined $session );
 
 my $request  = $session->get_request;
-my $identifier = $session->param( 'id' );
+my $identifier = $session->param( 'uolid' );
 my $eprintid = $session->param( 'eprintid' );
 my $emuid    = $session->param( 'emuid' );
 my $error    = { 'code' => undef, 'message' => '' };
