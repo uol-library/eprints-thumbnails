@@ -21,7 +21,7 @@ if ( $eprintid )
 		$session->get_repository->get_dataset( "archive" )
 	);
 }
-if ( $emuid )
+elsif ( $emuid )
 {
 	my $results = $session->get_repository->get_dataset( 'archive' )->search(
 		'filters' => [
@@ -41,7 +41,7 @@ if ( $emuid )
 		$error->{message} = "Record not found for EMu ID " . $emuid;
 	}
 }
-if ( $uolid )
+elsif ( $uolid )
 {
 	my $results = $session->get_repository->get_dataset( 'archive' )->search(
 		'filters' => [
@@ -61,7 +61,14 @@ if ( $uolid )
 		$error->{message} = "Record not found for identifier " . $uolid;
 	}
 }
-if ( $eprint )
+else
+{
+	$error->{code} = '400';
+	$error->{message} = "Bad request - no valid parameters";
+
+}
+
+if ( ! defined $error->{code} && $eprint )
 {
 	my $id   = $eprint->value( 'eprintid' );
     my $metsurl = "https://digital.library.leeds.ac.uk/cgi/export/eprint/" . $id . "/DLMETS/digitallibrary-eprint-" . $id . ".xml";
