@@ -28,6 +28,7 @@ elsif ( $emuid )
 			{
 				'meta_fields' => [ 'emu_id' ],
 				'value' => $emuid,
+                                'match' => 'EQ',
 			}
 		]
 	);
@@ -48,6 +49,7 @@ elsif ( $uolid )
 			{
 				'meta_fields' => [ 'uol_identifier' ],
 				'value' => $uolid,
+                                'match' => 'EQ',
 			}
 		]
 	);
